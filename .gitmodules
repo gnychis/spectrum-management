@@ -1,0 +1,3 @@
+[submodule "code/interference_tables/wifi/packetspammer"]
+	path = code/interference_tables/wifi/packetspammer
+	url = git@github.com:gnychis/packetspammer.git
