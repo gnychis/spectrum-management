@@ -4,3 +4,6 @@
 [submodule "code/interference_tables/wifi/firmware"]
 	path = code/interference_tables/wifi/firmware
 	url = git@github.com:gnychis/open-ath9k-htc-firmware.git
+[submodule "code/interference_tables/wifi/driver"]
+	path = code/interference_tables/wifi/driver
+	url = https://github.com/gnychis/ath9k_htc-backports
