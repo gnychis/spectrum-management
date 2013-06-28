@@ -1,3 +1,6 @@
 [submodule "code/interference_tables/wifi/packetspammer"]
 	path = code/interference_tables/wifi/packetspammer
 	url = git@github.com:gnychis/packetspammer.git
+[submodule "code/interference_tables/wifi/firmware"]
+	path = code/interference_tables/wifi/firmware
+	url = git@github.com:gnychis/open-ath9k-htc-firmware.git
