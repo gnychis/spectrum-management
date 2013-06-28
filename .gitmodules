@@ -10,3 +10,6 @@
 [submodule "code/interference_tables/zigbee/firmware"]
 	path = code/interference_tables/zigbee/firmware
 	url = git@github.com:gnychis/econotag-firmware.git
+[submodule "code/optimization/mlp_solver"]
+	path = code/optimization/mlp_solver
+	url = https://github.com/gnychis/coexisyst-orgsolver.git
