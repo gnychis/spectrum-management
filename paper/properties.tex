@@ -1,0 +1,60 @@
+\bigskip
+\hrule
+\bigskip
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+\smallskip
+\noindent \underline{\textbf{Physical Layer Properties}}
+\squishlist
+
+	\item \emph{\textbf{C}ommunication \textbf{A}bility} (\textbf{CA}$_{ab}$) - $n_a$ and $n_b$ share a physical layer protocol by which they can achieve packet-based communication.
+
+	\item \emph{\textbf{C}ommunication \textbf{R}ange} (\textbf{CR}$_{ab}$) - $n_a$ is within communication range of $n_b$ (i.e., $n_a$ can receive packets from $n_b$).
+
+	\item \emph{\textbf{I}nterference \textbf{R}ange} (\textbf{IR}$_{abc}$) - $n_c$ is in interference range of link $l_{ab}$ (i.e., $l_{ab}$ creates interference at $n_c$).
+	
+	\item \emph{\textbf{O}verlap in \textbf{F}requency} (\textbf{OF}$_{abcd}$) - the frequencies in use by $l_{ab}$ are also used by $l_{cd}$ (\emph{note:} the frequency used by $l_{ab}$ may be only a subset of the frequency space of $l_{cd}$).
+	
+	\item \emph{\textbf{P}artial \textbf{O}verlap in \textbf{F}requency} (\textbf{POF}$_{abcd}$) - only part of the frequency used by $l_{ab}$ is used by $l_{cd}$.
+
+	\item \emph{\textbf{Enc}ryption} (\textbf{ENC}$_{ab}$) - the link $l_{ab}$ is encrypted.  
+
+\squishend
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\smallskip
+\noindent \underline{\textbf{MAC Layer Properties}}
+\squishlist
+
+	\item \emph{\textbf{S}tatic \textbf{F}requency} (\textbf{SF}$_{ab}$) - the link $l_{ab}$ is established by coordinating a single static frequency.
+
+	\item \emph{\textbf{M}ulti-\textbf{F}requency \textbf{C}oordination} (\textbf{MFC}$_{ab}$) - the link $l_{ab}$ is established using multi-frequency coordination (i.e., channel hopping).
+	
+	\item \emph{\textbf{E}nergy \textbf{S}ensing} (\textbf{ES}$_{abc}$) - transmissions on the link $l_{ab}$ are energy sensed by $n_c$ (causing $n_c$ to defer to $l_{ab}$). 
+	
+	\item \emph{\textbf{V}irtual \textbf{C}arrier \textbf{S}ense} (\textbf{VCS}$_{abc}$) - transmissions on the link $l_{ab}$ are virtually carrier sensed by $n_c$ (causing $n_c$ to defer to $l_{ab}$).
+	
+\squishend
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+\smallskip
+\noindent \underline{\textbf{Wireless Link Performance Properties}}
+\squishlist
+
+	\item \emph{\textbf{R}eception \textbf{L}oss} (\textbf{RL}$_{abcd}$) - when the link $l_{ab}$ is active, it creates reception loss at the receiver $n_d$ for the link $l_{cd}$.
+	
+	\item \emph{\textbf{T}hroughput \textbf{L}oss} (\textbf{TL}$_{abcd}$) - when the link $l_{ab}$ is active, it reduces throughput for the link $l_{cd}$. 
+
+\squishend
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+\smallskip
+\noindent \underline{\textbf{Application Layer Properties}}
+\squishlist
+
+	\item \emph{\textbf{T}raffic \textbf{D}emand} (\textbf{TD}$_{abcd}$) - the links $l_{ab}$ and $l_{cd}$ have traffic demands that are not complimentary, leading to contention for the medium or concurrent transmissions.
+	
+\squishend
+\bigskip
+\hrule
+\bigskip

@@ -1,0 +1,285 @@
+% !TEX root = main.tex
+
+\subsection{Heterogeneous Spectrum Assignment \\Algorithm \& Optimization}
+
+%With an understanding of the constraints of each network, their spatial diversity, and their interference between each other, trying to find an optimal spectrum placement of such networks is NP-hard.  
+
+% should this be an "optimization" or an algorithm?
+
+In this section, we present a mixed integer program (MIP) based heterogeneous spectrum assignment algorithm.  It is general enough to fit many types of heterogeneous networks, while being descriptive enough to handle the support of various technologies and spectrum bands.  Ultimately, our goal is to find a good frequency placement for wireless radios in the environment, towards better efficiency and reduced heterogeneous efficiency.  The algorithm uses our hypergraph-based model as the input for the given environment (\S\ref{sec:model}), and uses our ability to estimate heterogeneous performance on a channel to find highly efficient spectrum configurations (\S\ref{sec:metric}).   To some extent, this is translating the environment represented by the hypergraph in to the MIP representation which we can build a spectrum assignment optimization problem around.   
+
+%Ultimately, our goal is to find an optimal spectrum organization of wireless radios that belong to a set $W$ (an NP-hard problem). 
+
+\smallskip
+
+\subsubsection{Basic Notation and Goal}
+
+Referencing our hypergraph-based model (\S\ref{sec:model}), we annotate a given radio $i$ as $R_i$ (\emph{a vertex in the model}), and consider all radios as belonging to the set $W$.   From the meta-data of each radio, we consider the restricted set of possible center frequencies as belonging to the set $F_i$.  There are $K_i$ possible frequencies such that:  $F_i = \{F_{i1}, F_{i2}, ... F_{iK_i}\}$.   Our goal is to choose an operational frequency ($f_{i} \in F_i$) for each radio $R_i \in W$ (respecting network dependencies) to reduce interference and contention; ultimately improving efficiency and performance in the spectrum.  
+
+%Given two networks $N_i$ and $N_r$, 
+%
+%For each center frequency in $F_i$, we denote $f_{ik} \in \{0,1\}$ to be whether center frequency $k$ is the operational center frequency.  Given two networks $N_i$ and $N_r$ operating on the respective center frequencies $F_{ik}$ and $F_{rj}$ (i.e., $f_{ik}=1$ and $f_{rj}=1$)
+
+\subsubsection{Environmental Representation and Notation}
+
+In addition to the basic notation, we need to represent the environment and the interactions of radios in the spectrum within our MIP framework.  For example, this includes representation as to whether they spatially overlap, they coordinate, and if they overlap in frequency; all of which drive the spectrum assignment decisions.  
+
+%That is, for example, whether two radios $i$ and $r$ overlap in their spectrum usage, 
+
+\vspace{0.1in}
+\uline{Spatial Overlap:} The set of radios that spatially overlap with radio $R_i$, such that $R_i$ either senses the radios or receives interference from them, belong to the set $S_i = \{R_1, R_2, ... \}$.  That is, within the hypergraph representation of the environment, any radio that is connected to $R_i$ via a hyperedge, or via a directional spatial edge to $R_i$.
+
+\vspace{0.1in}
+\uline{Coordination:}  Now, considering hyperedges and the binary indicators on the uni-directional edges to $R_i$, we can classify all radios that $R_i$ is within spatial range of into coordinated and uncoordinated radio sets.  We define $C_i$ to be the coordinated set of radios which, in our model, are connected to $R_i$ via a hyperedge, or uni-directional edge (to $R_i$) with an indicator of 1.  Likewise, $U_i$ is the uncoordinated set of radios which are connected to $R_i$ with a uni-directional edge (to $R_i$) with an indicator of 0.  Note that $C_i \cup U_i = S_i$ (i.e., the two sets make up $S_i$), and $C_i \cap U_i = \{\}$ (i.e., no radio can be in both sets).  Clearly, a radio $R_j$ will impact $R_i$ differently if $R_j \in C_i$ or $R_j \in U_i$, as we will further discuss and represent. 
+
+%Coordinated networks, which we denote as $C_i \in R_i$, are networks that can contribute to a loss in $Airtime_i$ for network $N_i$ due to spectrum sharing.  Uncoordinated networks, denoted as $U_i \in R_i$, contribute to a loss in $Airtime_i$ for $N_i$ due to interference from a lack of coordination (e.g., inability to sense).  Note that 
+
+%For network $N_i$, a center frequency $F_{ik}$ and bandwidth $B_i$ would create a frequency band that has a low frequency of $L_{ik} = F_{ik} - (B_i/2)$ and a high frequency of $H_{ik} = F_{ik} + (B_i/2)$.  This frequency band would overlap with another band belonging to network $N_r$ with a center frequency of $F_{rj}$ and bandwidth $B_i$ under the following conditions:
+%
+%\vspace{-0.1in}
+%\begin{equation}
+%\begin{split}
+%O_{i_kr_j} \leftarrow 
+%\begin{Bmatrix}
+%1:& L_{ik} \in [L_{rj}, H_{rj}]~~or~~L_{rj} \in [L_{ik}, H_{ik}] \\
+%0:&  L_{ik} \notin [L_{rj}, H_{rj}]~and~L_{rj} \notin [L_{ik}, H_{ik}] 
+%\end{Bmatrix}
+%\end{split}
+%\end{equation}
+%
+%Given a pair of networks, the overlap for all possible frequency bands can be determined and is static.  However, what is most important is whether two network's operational frequency bands overlap based on their chosen center frequency.  For each center frequency in $F_i$ belonging to $N_i$, we denote $f_{ik} \in \{0,1\}$ to be whether center frequency $k$ is the operational center frequency.   From this, we denote whether the operational frequency bands of $N_i$ and $N_r$ overlap as: 
+%
+%\vspace{-0.1in}
+%\begin{equation}
+%\label{eq:oir}
+%o_{ir} = \sum_{k=1}^{K_i} \sum_{j=1}^{K_r} O_{i_kr_j} \wedge f_{ik} \wedge f_{rj}~ \in \{0,1\}
+%\end{equation}
+%
+%That is, $o_{ir}$ will only take on the value of 1 (operational bands overlap) if the pair of center frequencies create frequency bands that overlap, and the two center frequencies are the operational center frequencies.  
+
+\vspace{0.1in}
+\uline{Operational Frequency Overlap:} Next, we represent whether or not two radios overlap in frequency.  Given a pair of radios, the overlap for all possible choices in their center frequency and bandwidth can be determined and is static.  Let $O_{i_{kj}r_{gm}}$ represent whether the frequencies $F_{i_k}$ and $F_{r_g}$ overlap, given respective bandwidths of $B_{i_j}$ and $B_{r_m}$.  For a radio $R_i$ with a center frequency $F_{i_k}$ and bandwidth $B_{i_j}$, the low frequency of its operational band would be $L_{i_{kj}} = F_{i_k} - (B_{i_j}/2)$, and its high frequency of its band: $H_{i_{kj}} = F_{i_k} + (B_{i_j}/2)$.  This frequency band would overlap with another band belonging to radio $R_r$ with a center frequency of $F_{r_g}$ and bandwidth $B_{r_m}$ under the following conditions:
+
+%\vspace{-0.1in}
+%\begin{equation}
+%\begin{split}
+%O_{i_{kj}r_{gm}} \leftarrow 
+%\begin{Bmatrix}
+%1:& L_{i_{kj}} \in [L_{r_{gm}}, H_{r_{gm}}]~~or~~L_{r_{gm}} \in [L_{i_{kj}}, H_{i_{kj}}] \\
+%0:&  L_{i_{kj}} \notin [L_{r_{gm}}, H_{r_{gm}}]~and~L_{r_{gm}} \notin [L_{i_{kj}}, H_{i_{kj}}] 
+%\end{Bmatrix}
+%\end{split}
+%\label{overlap}
+%\end{equation}
+
+\vspace{-0.1in}
+\begin{equation}
+\begin{split}
+O_{i_kr_j} \leftarrow 
+\begin{Bmatrix}
+1:& L_{ik} \in [L_{rj}, H_{rj}]~~or~~L_{rj} \in [L_{ik}, H_{ik}] \\
+0:&  L_{ik} \notin [L_{rj}, H_{rj}]~and~L_{rj} \notin [L_{ik}, H_{ik}] 
+\end{Bmatrix}
+\end{split}
+\end{equation}
+
+However, operationally overlapping is dependent on their chosen center frequencies and bandwidths, and is therefore a variable in our framework. We define the variable $o_{ir}$ to represent whether radios $R_i$ and $R_r$ overlap in the spectrum.  To model this behavior in our MIP framework, consider the following notation:
+
+%\vspace{-0.1in}
+%\begin{equation}
+%\label{eq:oir}
+%o_{ir} = \sum_{k=1}^{K_i} \sum_{j=1}^{J_i} \sum_{g=1}^{K_r} \sum_{m=1}^{J_r} O_{i_{kj}r_{gm}} \wedge (f_{i_k} \wedge b_{i_j}) \wedge (f_{r_j} \wedge b_{r_m})~ \in \{0,1\}
+%\end{equation}
+
+\vspace{-0.1in}
+\begin{equation}
+\label{eq:oir}
+o_{ir} = \sum_{k=1}^{K_i} \sum_{j=1}^{K_r} O_{i_kr_j} \wedge f_{ik} \wedge f_{rj}~ \in \{0,1\}
+\end{equation}
+
+Next, Let $f_{ik}$ represent whether the chosen frequency for $R_i$ is at the index $k$ in $F_i$.  That is, $f_{i_k} \leftarrow 1$ if $f_i = F_{i_k}$ , and $f_{i_k} \leftarrow 0$ if $f_i \ne F_{i_k}$.  Clearly, $\sum_{k=1}^{K_i} f_{i_k} = 1$ since only one center frequency can be chosen.  Likewise, let $b_{i_j}$ represent whether the bandwidth chosen for $R_i$ is at the index $j$ in $B_i$. 
+
+Referring to Equation~\ref{eq:oir}, for all possible pairs of frequencies and bandwidths, we first check if the frequencies and bandwidths overlap (i.e., $O_{i_{kj}r_{gm}}$).  Then, we logically \emph{AND} this with whether these pairs of frequencies and bandwidths are the active ones by radios $R_i$ and $R_r$.  Therefore, the summation will only produce a 1 if there was an instance in which a pair of frequencies and bandwidths overlapped, \emph{and they were the active pairs}.  It cannot produce a value greater than 1 since there can only be one active center frequency and bandwidth per-radio.
+
+\vspace{0.1in}
+\uline{Estimated Airtime (Performance):}  Finally, towards finding an efficient spectrum assignment for $R_i$, we model the estimated performance of $R_i$ given a frequency $f_i \in F_i$ and bandwidth $b_i \in B_i$.  This estimation not only includes $R_i$'s configuration in the spectrum, but also the configuration of all other radios in $W$.  To do so, we leverage our heterogeneous-aware performance metric (\S\ref{sec:metric}) and the given environment represented by our hypergraph model (\S\ref{sec:model}); further modeling them in our MIP framework. 
+
+In the meta-data within our model, we are given $R_i$'s desired airtime $D_i$  (i.e., traffic load) and, using our heterogeneous-aware performance metric, we estimate the expected airtime $Airtime_i$ (i.e., portion of $D_i$) that $R_i$ will receive on $f_i$ with bandwidth $b_i$.   If $R_i$'s links were operated in isolation, its airtime is equal to its ``desired" airtime utilization: $Airtime_i = D_i \in [0,1]$. However, when sharing the spectrum with other radios and networks, then $Airtime_i \leq D_i$ due to coordination from other radios (those in $C_i$) and a loss in useful airtime due to uncoordinated radios (those in $U_i$).  
+
+Note that it is important to scale $D_i$ by the bandwidth $b_i$.  That is, if $R_i$ were to operate its links at a bandwidth $b_{i_j}$ which is twice as wide as $b_i$, then its desired (or required) airtime $D_i$ is halved.  In addition to this, its average transmission length ($t_i$) is also halved, which reduces its vulnerability window to interference.  
+
+That is, given its desired airtime $D_i$, which is provided by the meta-data in our hypergraph, what is its expected airtime $Airtime_i$ given its assignment in the spectrum and the configuration of all other radios in the spectrum.  $Airtime_i$ is dependent on the contention from coordinated radios within spatial range (i.e., those in $C_i$), as well as interference from uncoordinated radios within spatial range (i.e., those in $U_i$). 
+
+
+Networks that are within sensing or interference range of $N_i$ belong to the set $R_i = \{N_1, N_2, ... \}$.  Such networks contribute to a loss in airtime for $N_i$ when utilizing overlapping frequencies due to sharing (i.e., sensing) or due to interference (e.g., from heterogeneity).  If wireless network $N_i$ is operated in isolation such that $R_i = \{ \}$, its airtime is equal to its ``desired" airtime utilization: $Airtime_i = D_i \in [0,1]$. However, when $R_i \neq \{ \}$ then $Airtime_i \leq D_i$. 
+
+Given that a network $N_r \in R_i$ only reduces $Airtime_i$ if the chosen frequencies $f_i$ and $f_r$ overlap (i.e., $o_{ir} = 1$), then it is clear that: 1) Networks in $N_r$ need not reduce $Airtime_i$, and 2) An optimal placement for all $N_r \in R_i$ is one in which:
+
+%$\sum_{r=0}^{|R_i|} O_{ir} = 0$. 
+\vspace{-0.2in}
+\begin{equation}
+ \text{\textbf{if}}~~\forall N_r \in R_i, ~o_{ir}=0 ~~\text{\textbf{then}}~~ Airtime_i = D_i
+\end{equation}
+
+\noindent That is, $N_i$ has optimal performance when no wireless network overlaps with it in the frequency domain. 
+
+Unfortunately, achieving $\forall N_r \in R_i, ~o_{ir}=0$ for all wireless networks $N_i \in W$ (i.e., each network is in frequency isolation) is typically not possible due to frequency restrictions of the networks and the finite nature of the spectrum.   The significant increase in density of wireless networks makes this more challenging.  Since this is typically not possible, the goal is to select $f_i$ for each network $N_i \in W$ in a way that reduces the amount of sharing (contention) and interference between the networks. 
+
+When frequency isolation is not possible, choosing an optimal frequency $f_i$ for $N_i$ will be one in which the impact of networks in $C_i$ and $U_i$ is minimal on $Airtime_i$.  By doing this, we look to maximize $\sum_{i=1}^{|W|} Airtime_i$.  
+
+\textbf{Impact of $o_{ic}=1$ on $N_i$, when $N_c \in C_i$}:  The impact of a wireless network $N_c \in C_i$ on $N_i$'s airtime ($Airtime_i$), when choosing $f_i$ and $f_u$ such that they overlap in operational frequency ($o_{ic}$) is a more complex relationship.  Such networks operate dependently and can create complex many-order effects which impact airtime.
+
+In our formulation, we relax the complexity of modeling many-order effects in spectrum sharing.    This relaxation models the impact of $N_c$'s usage of the shared wireless medium on $N_i$ as leaving only its residual (unused) airtime for $N_i$.  For example, if $N_c$ has an airtime utilization of 0.7, then the maximum airtime available to $N_i$ if $o_{ic}=1$ is 0.3.  Therefore, the expected airtime for $N_i$ given spectrum sharing with $N_c \in C_i$ is the following:
+
+\vspace{-0.15in}
+\begin{equation}
+\label{eq:resid}
+Airtime_i \leftarrow min(D_i, ~1 - D_c)
+\end{equation}
+
+
+\textbf{Impact of $o_{iu}=1$ on $N_i$, when $N_u \in U_i$}: The impact of choosing $f_i$ and $f_u$ such that $o_{iu}\leftarrow 1$ when $N_u \in U_i$, is that $N_u$ will decrease $Airtime_i$ due to a level of interference from being uncoordinated.  This level of sustained interference on $N_i$ from $N_u$, denoted $\sigma_{iu}$, can be estimated in the same way it was in our HCE metric (Section~\ref{hce_sustained}).  This is estimated by calculating the probability of a transmission from $N_u$ in a time window equal to $N_i$'s transmission length.  We denote the average transmission length of $N_i$ as $T_i$.  
+
+\vspace{-0.15in}
+\begin{equation}
+\sigma_{iu} = 1 - e^{~-Airtime_u*(T_u+* T_i)/T_u }
+\end{equation}
+
+\noindent Therefore, if $o_{iu}=1$ and $N_u \in U_i$, then interference from $N_u$ will impact $N_i$'s airtime as follows:
+
+\vspace{-0.15in}
+\begin{equation}
+Airtime_i \leftarrow Airtime_i * (1-\sigma_{iu})
+\end{equation}
+
+\noindent Since the impact on airtime from $N_u$'s interference is a function of $Airtime_u$, if $N_i$ must be placed in a channel to overlap with some $N_u \in U_i$, then it should be with a network with the least airtime to maximize $Airtime_i$. 
+
+
+% The expected airtime on a channel is.  
+
+% In a simple and greedy manner, $N_i$ could choose a frequency $Freq_i \in F_i$ that is least used frequency by networks in $R_i$.  However, the number of networks on a frequency does not typically reflect the amount of sharing or contention that will be experienced.
+
+
+
+  %% FIX eq.
+
+%Every network $\forall ~N \in R_i$
+%
+% However, when operated in a shared environment with contention, the actual airtime utilization of $N_i$ will be $A_i$, where: $0 \leq A_i \leq D_i \leq 1$.  
+
+\textbf{Fixed or Static Networks:} Note that it is important to model networks that cannot be organized but are within interference range (e.g., neighbor's networks), as they impact the networks we are organizing.  Such networks also belong in $W$ but are constrained in center frequency only, i.e., having $K_i=1$ center frequencies: $F_i=\{F_1\}$, where $f_1$ is the frequency the network is currently operating on.  All there models of the fixed and dynamic networks are the same.
+
+%\input{constraints}
+
+\subsubsection{Problem Formulation of Optimization}
+
+The spectrum coordinator uses the information gathered about networks in the spectrum to populate the necessary information about each network to solve for the optimal set of center frequencies for each network.  
+
+\smallskip
+\noindent \textbf{Objective:} To maximize the total airtime in the system, by optimally placing networks in the frequency space to reduce interference between uncoordinated networks, while minimizing contention between coordinated networks.
+
+\smallskip
+\noindent \textbf{Control Variables:} The resulting airtime of each wireless network $N_i$ is denoted $Airtime_i$, impacted by the chosen frequency placement of each network.  Let $f_i \in F_i$ be the chosen center frequency, and $f_{ik} \leftarrow \{0,1\}$ denote whether $F_{ik} \in F_i$ is the operational center frequency.  
+
+%Given two networks $N_i$ and $N_r$, let $SAF_{ir} = AF_i \times AF_r$ represent for each possible pair of operational frequencies for the networks, whether both frequencies are active.   If the respective operational frequency indexes are \emph{k} and \emph{j} such that $AF_{ik}=1$ and $AF_{rj}=1$, then $SAF_{irz}=1$ where $z = |AF_r|*(k-1)+(j-1)$.  All other indices in $SAF_{ir}$ are 0.
+%
+%Likewise, given two networks $N_i$ and $N_r$, let $SOF_{ir} = AF_i \times AF_r$ represent for each possible pair of operational frequencies for the networks, whether the frequencies overlap.  If the center frequencies at indexes $k$ and $j$ overlap for networks $N_i$ and $N_r$ (i.e., $OF_{ikrj}=1$), then $SOF_{ijz}=1$ where $z= |F_r|*(k-1)+(j-1)$.
+%
+%For networks $N_i$ and $N_r$, we use $SF_{ir}$ and $SOF_{ir}$ to determine whether the chosen operational frequencies overlap.  Since: 1) $SF_{ir}$ has for each pair of frequencies whether that pair is active, 2) $SOF_{ir}$ has whether each pair of frequencies overlap, and 3) Each index in both sets has a value of 0 or 1, then the dot product of $SF_{ir}$ and $SOF_{ir}$ produces whether the chosen frequencies overlap.  We denote this as \emph{operational frequency overlap}: $OFO_{ir} = SF_{ir} \cdot SOF_{ir}  \in \{1,0\}$.
+
+%, such that for a given index $c$: 
+%
+%\begin{equation}
+%\begin{split}
+%OF_{ikc} \leftarrow 
+%\begin{Bmatrix}
+%1:& OF_ \\
+%0:&  LF_{ik} \notin [LF_{rj}, HF_{rj}]~and~LF_{rj} \notin [LF_{ik}, HF_{ik}] 
+%\end{Bmatrix}
+%\end{split}
+%\end{equation}
+
+%$OF_{ikc} \leftarrow \{1,0\}$ 
+
+\smallskip
+\noindent \textbf{Inputs:}
+\squishlist
+
+	\item The set of networks $W$ that are sensed in the environment being monitored (i.e., the home).
+	
+	\item  The set of parameters for each network $N_i \in W$: the fixed spectral bandwidth $B_i$, restricted set of center frequencies $F_i$, desired airtime $D_i$, and average transmission length $T_i$.  
+	
+	\item For each $N_i$, the set of networks $R_i$ whose interference range includes network $N_i$.  In addition, a classification of each network $N_r \in R_i$ to be an uncoordinated network: $N_r \in U_i \subseteq R_i$, or a coordinated network: $N_r \in C_r \subseteq R_i$.
+
+\squishend
+
+	
+Each of these inputs is available from the spatial monitoring of the environment by the spectrum coordinator.  
+
+\smallskip
+\noindent \textbf{Objective Function:} 
+\begin{eqnarray}
+%
+% Expected residual airtime for network i
+\forall i, ~Residual_i = 1 ~- \sum_{c:~N_c \in C_i} D_c * o_{ic}\\
+%
+% Expected loss rate due to uncoordinated networks 
+\forall i, ~LossRate_i = 1 ~- \prod_{u:~N_u \in U_i} 1 - \sigma_{iu} * o_{iu}\\
+%
+% Defining the airtime of a network
+\forall i, ~Airtime_i = min(D_i, Residual_i) * (1-LossRate_i) 
+\end{eqnarray}
+\noindent $$\text{\textbf{~Maximize~}} \min_{i:~N_i \in W} ~\frac{Airtime_i}{D_i}~\text{, \emph{subject to}}$$
+
+\vspace{-0.1in}
+\begin{eqnarray}
+%
+% For all networks, only one center frequency can be selected
+\forall i, ~\sum_{k=1}^{K_i} f_{ik} = 1 \\
+%
+% For all networks, the overlap has to be 0 or 1, so it is in this range
+\forall i, \forall r, ~ o_{ir} \in \{0,1\} \\
+%
+% For all networks, the sustained interference is between 0 and 1
+\forall i, \forall u, ~ 0 \leq \sigma_{iu} \leq 1 \\
+% For all networks, the actual Airtime has to be less than or equal to what they ask for
+\forall i, ~Airtime_i \leq D_i \\
+\forall i, ~0 \leq Airtime_i \leq 1 \\
+\forall i, ~0 \leq D_i \leq 1
+\end{eqnarray}
+
+\smallskip
+\noindent \textbf{Linear Modeling:}  To express in Equation~\ref{eq:oir} linearly, we replace $x_1 \wedge x_2 \wedge x_3$ with a corresponding binary variable $y$ and introduce the following 5 constraints:  (1) $y \leq x_1$, (2) $y \leq x_2$, (3) $y \leq x_3$, (4) $y \geq x_1 + x_2 + x_3 -2$, and (5) $y \in \{0,1\}$. 
+
+To model a $min$ function (e.g., Equation~\ref{eq:resid}), we replace $min(x,y)$ with $z$ and introduce the following 2 constraints: (1) $z \leq x$ and (2) $z \leq y$. 
+
+Modeling the cross product found in the $LossRate$ equation in a linear way is done using a technique by Peterson~\cite{linprod}.  The technique breaks down the computation of the cross product in to a series of products in which the result of a given product is replaced with a new variable, and this variable is used in the subsequent product. 
+
+Lastly, in our objective function, we model $max(~min(\frac{Airtime_i}{D_i})~)$ as $max~\eta$, where: $\forall i, ~\eta \leq \frac{Airtime_i}{D_i}$.
+
+
+%From this, $o_{ir}$ will only take on a value of 1 if the two frequencies overlap and they are the chosen operational frequencies.  That is, as shown in Equation~\ref{eq:oir}, for all pairs of frequencies, test if the two frequencies overla
+
+%Additionally, let $O_{i_kr_j}$ represent whether the frequencies $f_{i_k}$ and $f_{r_j}$ overlap.  Again, whether or not two frequencies overlap is static and can be pre-computed, therefore $O_{i_kr_j}$ is static.  
+
+%For a given pair of radios $R_i$ and $R_r$, for each frequency 
+
+%Given a center frequency $F_{rj}$ belonging to network $N_r$ with a bandwidth of $B_r$, its operational band is said to overlap with 
+%
+%Two networks $N_i$ and $N_r$, respectively operating at $f_i \leftarrow F_{ik}$ and $f_r \leftarrow F_{rj}$ with bandwidths of $B_i$ and $B_r$, are denoted to overlap in frequency by the following:
+
+%Given a pair of networks, the overlap for all possible frequency bands can be determined and is static.  However, what is most important is whether two network's operational frequency bands overlap based on their chosen center frequency.  For each center frequency in $F_i$ belonging to $N_i$, we denote $f_{ik} \in \{0,1\}$ to be whether center frequency $k$ is the operational center frequency.   From this, we denote whether the operational frequency bands of $N_i$ and $N_r$ overlap as: 
+
+%Note that given a pair of center frequencies and bandwidths, 
+
+%\noindent For the set of frequencies $F_i$ for $N_i$ and $F_r$ for $N_r$, we construct
+
+
+%The operational center frequency of $N_i$ is denoted as $Freq_i \in F_i$.  
+%
+%A network operating on a center frequency $Freq_i$ with bandwidth $B_i$ has a lower frequency .  Two networks $N_i$ and $N_r$, respectively operating on the center frequencies $Freq_i$ and $Freq_r$, are said to overlap in the frequency domain if the following logical statement is true:
+
+%Likewise, we also denote $o_{ir} \in \{0,1\}$ to be whether or not two networks $N_i$ and $N_r$ overlap given their chosen center frequencies.  With networks $N_i$ and $N_r$ operating on the frequencies $f_i$ and $f_r$, $o_{ir} = O_{i_kr_j}$
+
+%That is, $o_{ir}$ will only take on the value of 1 (operational bands overlap) if the pair of center frequencies create frequency bands that overlap, and the two center frequencies are the operational center frequencies.  
+

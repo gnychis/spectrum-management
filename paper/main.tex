@@ -1,0 +1,249 @@
+%\documentclass[twocolumn,10pt,letterpaper]{extarticle}
+\documentclass{sig-alternate-10pt}
+
+
+\usepackage{amstext}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{textcomp}
+\usepackage{cite}
+\usepackage[normalem]{ulem}
+
+%%% Set these variables appropriately
+%%%
+%% Note:  Authors is hardcoded below, this line only used for the PDF info
+%\newcommand{\AUTHORS}{Authors}Ï
+%\newcommand{\TITLE}{Coexisting with Wireless Microphones in a TV Channel}
+%\newcommand{\KEYWORDS}{}
+%\newcommand{\CONFERENCE}{NSDI 2011}
+%\newcommand{\PAGENUMBERS}{no}       % "yes" or "no"
+%\newcommand{\TOAPPEAR}{no}
+%\newcommand{\COLOR}{yes}
+%\newcommand{\showComments}{yes}
+%\newcommand{\comment}[1]{}
+%\newcommand{\onlyAbstract}{no}
+%\newcommand{\ignore}[1]{}
+%\newcommand{\strober}{MicProtector}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%
+%%%  Page Setup
+%%%
+\special{papersize=8.5in,11in}
+\setlength{\pdfpagewidth}{8.5in}
+\setlength{\pdfpageheight}{11in}
+%
+%\usepackage{ifthen}
+%\ifthenelse{\equal{\PAGENUMBERS}{yes}}{%Ï
+%            left=1in,right=1in,top=1in,
+%            footskip=0.5in,bottom=1in,     % Room for page numbers
+%            columnsep=0.25in
+%            ]{geometry}
+%}{%
+%\usepackage[noheadfoot,left=0.75in,right=0.85in,top=0.75in,
+%            footskip=0.5in,bottom=1in,
+%            columnsep=0.25in
+%        ]{geometry}
+%}
+
+%%%
+%%%  Captions
+%%%
+%\usepackage[font=bf]{caption}
+%\usepackage[font=bf,aboveskip=0pt]{caption} % SPACE
+
+%%%
+%%%  Section headings
+%%%
+%\usepackage{titlesec}
+
+%%%
+%%%  Lists
+%%%
+%\usepackage{enumitem}
+%\setlist{itemsep=0pt,parsep=0pt}             % more compact lists
+
+%%%
+%%%  Header / Footer
+%%%
+%\usepackage{fancyhdr}
+%\renewcommand{\headrulewidth}{0pt}
+
+%\ifthenelse{\equal{\PAGENUMBERS}{yes}}{%
+%  \pagestyle{plain}
+%}{%
+%  \pagestyle{empty}
+%}
+
+%%%
+%%%  Bibliography
+%%%
+%\usepackage[numbers]{natbib}
+
+%%%
+%%%  Footnotes / Endnotes
+%%%
+\interfootnotelinepenalty=10000  % Split footnotes are annoying
+
+%%%
+%%%  Tables
+%%%
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage{colortbl}
+
+\usepackage[table]{xcolor}
+\usepackage{multirow}
+
+%%%
+%%%  Fonts
+%%%
+\usepackage{mathptmx}                        % Times/Times-like math symbols
+\usepackage{courier}
+%\usepackage[scaled=0.92]{helvet}
+
+%%%
+%%%  PDF setup
+%%%
+%\ifthenelse{\equal{\COLOR}{yes}}{%
+%  \usepackage[colorlinks]{hyperref}%         % for online version
+%}{%
+%  \usepackage[pdfborder={0 0 0}]{hyperref}%  % for paper (B&W) version
+%}
+\usepackage{url}
+
+%\hypersetup{%
+%pdfauthor = {\AUTHORS},
+%pdftitle = {\TITLE},
+%pdfsubject = {\CONFERENCE},
+%pdfkeywords = {\KEYWORDS},
+%bookmarksopen = {true}
+%}
+
+%%
+%% Figure placeholder macros
+%%
+
+%\definecolor{placeholderbg}{rgb}{0.85,0.85,0.85}
+%\newcommand{\placeholder}[1]{%
+%\fcolorbox{black}{placeholderbg}{\parbox[top][1.5in][c]{0.95\columnwidth}{#1}}}
+
+
+%%%
+%%%  Misc
+%%%
+\usepackage{graphicx}
+\usepackage{subfigure}
+
+%%%
+%%%  Sample ACM Copyright Block
+%%%
+%\usepackage{float}
+%\newfloat{acmcr}{b}{acmcr}
+%\newcommand{\acmcopyright}{%
+%\begin{acmcr}
+%\parbox[b]{20pc}{%
+%\footnotesize
+%Permission to make digital or hard copies of all or part of this work
+%for personal or classroom use is granted without fee provided that
+%copies are not made or distributed for profit or commercial advantage
+%and that copies bear this notice and the full citation on the first
+%page.  To copy otherwise, to republish, to post on servers or to
+%redistribute to lists, requires prior specific permission and/or a fee.
+%
+%{\em Conference}, Month Date--Date, Year, Location\\
+%Copyright 200X ACM X-XXXXX-XX-X/XX/XX ...\$5.00}
+%\end{acmcr}}
+
+%%%
+%%%  Comments
+%%%
+\newcommand{\note}[2]{
+    \textcolor{#1}{#2}
+}
+
+   \newlength{\realbaselineskip}
+\setlength{\realbaselineskip}{\baselineskip}
+\newcommand{\changespacing}[1]{\setlength{\baselineskip}{#1\realbaselineskip}}
+
+\newcommand{\george}[1]{\note{magenta}{George: #1}}
+\newcommand{\chris}[1]{\note{green}{Chris: #1}}
+\newcommand{\thomas}[1]{\note{blue}{Thomas: #1}}
+\newcommand{\onur}[1]{\note{red}{Onur: #1}}
+\newcommand{\srini}[1]{\note{red}{Srini: #1}}
+
+\newcommand{\squishlist}{
+   \begin{list}{$\bullet$}
+    { \setlength{\itemsep}{0pt}      \setlength{\parsep}{3pt}
+      \setlength{\topsep}{3pt}       \setlength{\partopsep}{0pt}
+      \setlength{\leftmargin}{1.5em} \setlength{\labelwidth}{1em}
+      \setlength{\labelsep}{0.5em} } }
+
+\newcommand{\squishlisttwo}{
+   \begin{list}{$\bullet$}
+    { \setlength{\itemsep}{0pt}    \setlength{\parsep}{0pt}
+      \setlength{\topsep}{0pt}     \setlength{\partopsep}{0pt}
+      \setlength{\leftmargin}{2em} \setlength{\labelwidth}{1.5em}
+      \setlength{\labelsep}{0.5em} } }
+
+\newcommand{\squishend}{
+    \end{list}  }
+
+
+
+
+
+% This needs to be the last thing before \begin{document}
+%\usepackage{microtype}  % SPACE
+
+%%%%%%%%%%%%%%%%%%%%  START DOCUMENT  %%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\date{}
+\title{\LARGE \textbf{Heterogeneous-Aware Spectrum Assignment and Management}}
+\author{{\large Paper \#blah}\\
+%{\em Affiliations}
+}
+
+\maketitle
+
+\input{abstract}
+\input{intro}
+\input{requirements}
+\input{curr_models}
+%\input{challenges}
+%\input{system}
+%\input{discovery}
+%\input{conflict_graph}
+\input{planning}
+%\input{evaluating_hce}
+%\input{lp_problem}
+
+\appendix
+\input{appendix}
+
+
+%\setlength{\baselineskip}{0.9\realbaselineskip}
+
+% Fix the overlapping-References problem
+\let\oldthebibliography=\thebibliography
+  \let\endoldthebibliography=\endthebibliography
+  \renewenvironment{thebibliography}[1]{%
+    \begin{oldthebibliography}{#1}%
+      \setlength{\parskip}{0ex}%
+      \setlength{\itemsep}{0ex}%
+%      \vspace{1em}
+  }%
+  {%
+    \end{oldthebibliography}%
+  }
+
+\bibliographystyle{abbrv}
+%\begin{footnotesize}
+{%\small
+\bibliography{main}
+}
+%\end{footnotesize}
+
+\end{document}

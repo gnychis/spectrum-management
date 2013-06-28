@@ -1,0 +1,19 @@
+\section{Evaluating HCE}
+
+To evaluate the HCE metric, we compare network performance when planning is done using HCE ($hce_c(n)$) as a metric for channel evaluation as compared to the traditional metric of expected airtime ($\rho_n(c)$).   We construct a spatially-enhanced simulation of heterogeneous networks in 2.4GHz to evaluate the use of the metrics.  For each simulation, we randomly generate a set of networks from: 802.11g, 802.11n, ZigBee, Bluetooth, and analog cordless phones.  Uniformly random airtime's are chosen for 802.11 networks, and exponentially weighted airtime's are chosen for ZigBee networks ranging between 0.01 and 0.15.  Finally, there are two styles of workloads: (1) purely configurable networks whose channels can be adjusted, and (2) configurable and static networks in which there are a set of networks whose channels cannot be adjusted (e.g., a neighbor's networks). 
+
+There are many decisions to be made when planning the frequency placement of a set of heterogeneous networks:
+
+\squishlist
+
+	\item \textbf{Insert Order}:   Which protocols are inserted first?  Within a protocol, what order do the networks get inserted?
+	
+	\item \textbf{Channel Selection}:  For a given network and a set of expected airtimes across a set of channels ($c$) using $hce_c(n)$ or $\rho_n(c)$, which channel is selected?  The one with the greatest value?  The one with the best fit?
+	
+	\item \textbf{Search Space:}  Do you search the entire spectrum, calculating an $hce_c(n)$ or $\rho_n(c)$ value for every possible channel?  Or do you prioritize checking segments of the spectrum first?  Searching the entire spectrum is quadratic (each network calculates a value for every 1MHz bin), and the complexity increases exponentially with the number of networks (each network must calculate its sustained/generated interference on every other network if it searches the entire space).  
+
+\squishend
+
+Such decisions suggest the need for an intelligent algorithm which uses the HCE metric. 
+
+\textbf{Initial Naive Algorithm:}  For initial evaluation of HCE, we use the following naive algorithm.  The \textbf{insertion order} happens by inserting all networks from the protocol with the large frequency usage (e.g., 802.11) and continues in decreasing order.  When inserting networks within a protocol, networks are inserted by airtime utilization in descending order (i.e., highest airtime first).    \textbf{Channel Selection} is greedy: the naive algorithm chooses the channel for the network which has the highest $hce_n(c)$ or $\rho_n(c)$ value.  Finally, the \textbf{search space} is exhaustive:  all possible channels for a network are evaluated.  

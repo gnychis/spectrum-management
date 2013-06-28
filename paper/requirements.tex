@@ -1,0 +1,146 @@
+% !TEX root = main.tex
+
+\section{Requirements in Heterogeneous Spectrum Assignment}
+\label{sec:requirements}
+
+% Need a model which accurately represents the environment
+% Need a spectrum assignment algorithm
+% Assignment algorithm needs way to estimate performance on a channel
+
+To make accurate and effective spectrum management decisions, a spectrum assignment model must be able represent the properties of the networks, devices, and their interaction in the environment.  For example, one such fundamental property is \emph{spatial overlap} between networks in the environment.  Graph-based models typically represent  spatial overlap by ``connecting'' two vertices (which represent networks), with an edge.  Using bi-directional edges in the model will assume symmetric spatial behavior (i.e., both networks \emph{must} be within range of each other), whereas uni-directional edges can model asymmetric behavior.  Any property of the environment that is not (or cannot be) represented by the model is typically assumed to be static or homogeneous in the environment (e.g., not representing bandwidth typically assumes a single bandwidth).
+
+In the remainder of this section, we identify the key properties \emph{of a heterogeneous environment} that must be represented by a heterogeneous model.  Towards our goal of providing a generic but descriptive model, such properties should follow in this manner.  By identifying these properties, we can better understand the limitations of current models from being able to represent such properties, and we can drive the design of our heterogeneous model.  All of these properties must be represented by the model to make accurate spectrum management decisions.  To make such properties clear to the reader, we break them down by layer.
+
+\smallskip
+
+
+
+% TX power.  Assumption:  
+
+\textbf{Physical Layer:}  At the physical layer, it is important to model variations in \emph{bandwidth} and \emph{operational frequencies}.  This is not only critical across heterogeneous technologies which have varying channels and widths, but also within single standards which are beginning to support variable bandwidths (e.g., 802.11ac).  Operational frequencies should not be limited to a single spectrum band, and should reflect any possible band the network/device can operate in (e.g., 900MHz, 2.4GHz, or 5GHz).  Although transmission power is another property at the physical layer that could be adjusted, the interactions that are created from varying it are complex and typically warrants an entire model of its own.  
+
+%\george{TX Power is also one, but I think outside the scope of our work?}. 
+
+\smallskip
+
+\textbf{MAC Layer:}  There are many specific properties of various MAC layers that could be modeled, however, to remain generic we believe that such properties should be fundamentally abstracted in to a simple parameter: \emph{coordination}.  That is, at the most basic level:  do the specific MAC parameters a pair of devices/networks allow them to coordinate spectrum access?  This is meant to incorporate whether specifics allow them to coordinate or not (e.g., one networking using 802.11 Greenfield mode, and one not), however the model needs to represent the underlying and resulting behavior in a generic way (i.e., coordination or not).
+
+\smallskip
+
+\textbf{Application Layer:} Varying applications that can run on the heterogeneous technologies (e.g., video streaming vs. bursty access) will demand different \emph{spectrum utilization} requirements.  The baseline and expected spectrum utilization is important to model as, for example, placing two high demanding and heterogeneous technologies will lead to significant amounts of interference.  Two less demanding heterogeneous technologies with more periodic spectrum access may, however, be better to place together. 
+
+% \george{Ranveer had mentioned latency requirements, which our model does not (yet) incorporate.}
+
+\smallskip
+
+\textbf{Environmental Characteristics:} There are several key environmental characteristics that need to be modeled.  The most traditional is \emph{spatial overlap}, i.e., given the environment and placement of networks, which are within (interference) range of each other?  With the rise in mobile devices, it is also important to model which devices are \emph{mobile or periodic} in the environment. Finally,  in environments like the home, one must be able to model \emph{reconfigurability}.  That is, the spectrum assignment model must be able to account for neighboring networks and devices that cannot be reassigned in the spectrum.  To the best of our knowledge, reconfigurability has not been addressed by any prior model.
+
+%\george{I can't decide where to put \emph{``interference.''}  I want to be able to say, the model should be able to account for various levels of interference based on modulations or coordination/non-coordination.  It's not something the model "predicts" but you can specify an expected "loss rate" given a pair of modulations, technologies, or partial channel overlap.  So it's kind of a macro level thing above the MAC and PHY.  Maybe breaking down by layer is unnecessary anyway.}
+
+
+%Before we 
+%
+%
+%(vertices) is typically represented by  
+%
+%between networks is typically represented in graph-based models with 
+%
+%not explicitly represented by a spectrum assignment model has historically been assumed to be homogeneous across the environment. For example, basic graph-based models represent spatial overlap by links, 
+%
+%
+%  For example, a model that is unable to represent asymmetric links in a model will make the assumption that all links are bi-directional.  
+%
+%Without being able to represent or model the (necessary) differences in the environment, the model will be unable to 
+%
+%
+%The requirements of a spectrum assignment \emph{model} can be thought of as the properties of the networks, devices, and environment that must be representable to make accurate and effective spectrum management decisions (\emph{including underlying assumptions about the environment}).  This includes information across the layers
+%
+%For example, in a homogeneous environment, spectrum assignment models can assume that all networks and devices coordinate due to a unified MAC layer and, therefore, do not need to represent diversities in the MAC and/or coordination by devices.
+%
+%The requirements for a heterogeneous model are more rich. properly modeling a heterogeneous environment, due to unifying assumptions which cannot be made across several layers,
+%
+% spectrum assignment models for homogeneous environments can assume that the networks and devices coordinate and therefore they do not need to incorporate a form of representation for whether 
+%
+% in a homogeneous environment, spectrum assignment models can assume that the networks and devices coordinate spectrum access
+%
+%% For example, in a homogeneous environment, models do not need to represent 
+%
+%The requirements of a heterogeneous spectrum assignment model can be 
+%
+%Identifying the key properties of an environment and its devices/networks that an ideal heterogeneous spectrum assignment model 
+%
+%that a heterogeneous spectrum assignment model is critical to:  1) Understanding the limitations of current models, and 2)  Driving the design of our heterogeneous model.  Many of these required properties
+%
+%The underlying assumption that can be made in homogeneous environments which reduces the 
+%
+%Unlike homogeneous environments where properties across all layers can be assumed to be identical (e.g., MAC layer 
+%
+%To better understand the limitations of current models and their inability to represent and manage heterogeneous environment
+%
+%As mentioned, at the highest level the model needs to be \textbf{generic} and \textbf{descriptive}.  
+
+%\smallskip
+%
+%\hrule
+%
+%\smallskip
+%
+%In a heterogeneous environment, the model needs to capture the following properties to be \emph{descriptive}:
+%
+%\smallskip
+%
+%\squishlist
+%
+%\item \textbf{Coordination}:  The impact of networks or devices in range that coordinate each other 
+%
+%\item \textbf{Interference}:  For networks that do not
+%
+%\item \textbf{Limitations}:  The possible sets of frequencies, the ability to change frequency at all...
+%
+%\item \textbf{Bandwidths}: 
+%
+%\squishend
+%
+%\smallskip
+%
+%\hrule
+%
+%\smallskip
+%
+%In a heterogeneous environment, for the model to be \emph{descriptive}, it needs to capture properties across the key layers of each network.  Specifically: 
+%
+%\smallskip
+
+%\noindent \textbf{Physical Layer:}
+%
+%	\squishlist
+%	
+%	\item \uline{Spatial Overlap}:  Do the two devices overlap in space
+%
+%	\item \uline{Bandwidth}:  The differences in bandwidths
+%	
+%	\item \uline{Frequency}:  Possible sets of frequencies to operate at
+%
+%	\squishend
+%	
+%\smallskip	
+%\noindent \textbf{MAC Layer:}
+%
+%	\squishlist
+%
+%	\item \uline{Coordination}:  If they back off to each other
+%
+%	\squishend
+%	
+%\smallskip
+%\noindent \textbf{Application / Device:}
+%
+%	\squishlist
+%	
+%	\item \uline{Utilization}:  When active, how much airtime
+%	
+%	\item \uline{Dynamic}: Always on/off
+%	
+%	\item \uline{Mobile:}  Always in the same place
+%	
+%	\squishend
