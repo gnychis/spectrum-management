@@ -7,3 +7,6 @@
 [submodule "code/interference_tables/wifi/driver"]
 	path = code/interference_tables/wifi/driver
 	url = https://github.com/gnychis/ath9k_htc-backports
+[submodule "code/interference_tables/zigbee/firmware"]
+	path = code/interference_tables/zigbee/firmware
+	url = git@github.com:gnychis/econotag-firmware.git
