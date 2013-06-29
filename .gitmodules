@@ -16,3 +16,6 @@
 [submodule "code/optimization/mip_solver"]
 	path = code/optimization/mip_solver
 	url = git@github.com:gnychis/coexisyst-orgsolver.git
+[submodule "code/interference_tables/bluetooth/ubertooth"]
+	path = code/interference_tables/bluetooth/ubertooth
+	url = ssh://gnychis@git.code.sf.net/u/gnychis/ubertooth
