@@ -13,3 +13,6 @@
 [submodule "code/optimization/mlp_solver"]
 	path = code/optimization/mlp_solver
 	url = https://github.com/gnychis/coexisyst-orgsolver.git
+[submodule "code/optimization/mip_solver"]
+	path = code/optimization/mip_solver
+	url = git@github.com:gnychis/coexisyst-orgsolver.git
